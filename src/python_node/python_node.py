@@ -1,29 +1,29 @@
-#! /usr/bin/ python3
+#! /usr/bin/env python
 
 import rospy
-from std_msgs import String, Bool, Int32, Float64
-from nav_msgs import Odometry
-from geometry_msgs import TwistWithCovarianceStamped
-from sensor_msgs import Imu
+from std_msgs.msg import String, Bool, Int32, Float64
+from nav_msgs.msg import Odometry
+from geometry_msgs.msg import TwistWithCovarianceStamped
+from sensor_msgs.msg import Imu
 
 
 class PythonNode():
     def __init__(self):
         # declare params, subscriber and publisher
-        myVar1_ = int(rospy.get_param('~myVar1_', '1'))
-        myVar2_ = float(rospy.get_param('~myVar2_', '1.0'))
-        timerFreq_ = float(rospy.get_param('~timerFreq_', '20'))
+        self.myVar1_ = int(rospy.get_param('~myVar1_', '1'))
+        self.myVar2_ = float(rospy.get_param('~myVar2_', '1.0'))
+        self.timerFreq_ = float(rospy.get_param('~timerFreq_', '20'))
 
-        imuSub_ = rospy.Subscriber('/imu/data', Imu, imuCallback)
-        odomSub_ = rospy.Subscriber('/odom', Odometry, odomCallback)
+        self.imuSub_ = rospy.Subscriber('/imu/data', Imu, self.imuCallback)
+        self.odomSub_ = rospy.Subscriber('/odom', Odometry, self.odomCallback)
 
-        vehicleCmdPub_ = rospy.Publisher(
+        self.vehicleCmdPub_ = rospy.Publisher(
             '/vehicle_cmd', TwistWithCovarianceStamped, queue_size=5)
 
         # declare member variables
-        currImu_ = Imu()
-        currVel_ = 0.0
-        vehicleCmdMsg_ = TwistWithCovarianceStamped()
+        self.currImu_ = Imu()
+        self.currVel_ = 0.0
+        self.vehicleCmdMsg_ = TwistWithCovarianceStamped()
 
         while not rospy.is_shutdown():
             self.run()
@@ -35,10 +35,10 @@ class PythonNode():
         self.vehicleCmdMsg_.twist.twist.linear.x = self.currVel_
         self.vehicleCmdPub_.publish(self.vehicleCmdMsg_)
 
-    def imuCallback(self, msg: Imu) -> None:
+    def imuCallback(self, msg):
         self.currImu_ = msg
 
-    def odomCallback(self, msg: Odometry) -> None:
+    def odomCallback(self, msg):
         self.currVel_ = msg.twist.twist.linear.x
 
 
