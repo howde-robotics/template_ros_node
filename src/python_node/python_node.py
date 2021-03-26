@@ -42,7 +42,7 @@ class PythonNode():
         self.currVel_ = msg.twist.twist.linear.x
 
 
-if __name__ == 'main':
+if __name__ == '__main__':
     rospy.init_node('python_node')
     try:
         node = PythonNode()
